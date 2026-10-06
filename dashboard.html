@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ড্যাশবোর্ড — HabitTrack</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/custom.css">
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-slate-950 text-slate-200 opacity-0">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-slate-950/80 backdrop-blur border-b border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center font-bold text-white">H</div>
+        <span class="font-bold hidden sm:inline">HabitTrack</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-sm text-slate-400 hidden sm:inline" data-user-name>বন্ধু</span>
+        <button onclick="handleLogout()" class="px-3 py-2 rounded-lg text-sm bg-slate-800 hover:bg-slate-700 transition">
+          লগআউট
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
+
+    <!-- Welcome -->
+    <div class="fade-in">
+      <h1 class="text-2xl md:text-3xl font-bold">স্বাগতম, <span data-user-name>বন্ধু</span> 👋</h1>
+      <p class="text-slate-400 text-sm mt-1">আজকের দিনটা আপনার। এক ধাপ এগিয়ে চলুন।</p>
+    </div>
+
+    <!-- Streak Card -->
+    <div class="p-6 rounded-2xl bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-900 border border-indigo-500/20 fade-in">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <p class="text-slate-400 text-sm mb-1">বর্তমান স্ট্রিক</p>
+          <div class="flex items-baseline gap-2">
+            <span id="streakDays" class="text-5xl font-bold text-emerald-400">০</span>
+            <span class="text-slate-400">দিন</span>
+          </div>
+          <p id="streakDetail" class="text-slate-500 text-xs mt-1">লোড হচ্ছে...</p>
+        </div>
+        <div class="flex flex-col gap-2">
+          <button id="checkinBtn" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 font-semibold transition">
+            ✅ আজকের দিনটি কাটিয়ে গেছি
+          </button>
+          <button id="relapseBtn" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm transition">
+            ⚠️ রিল্যাপ্স হয়েছে (রিসেট)
+          </button>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3 mt-6">
+        <div class="p-3 rounded-xl bg-slate-950/50 border border-slate-800">
+          <p class="text-slate-400 text-xs">সেরা স্ট্রিক</p>
+          <p class="text-xl font-bold mt-1"><span id="bestStreak">০</span> দিন</p>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-950/50 border border-slate-800">
+          <p class="text-slate-400 text-xs">মোট চেক-ইন</p>
+          <p class="text-xl font-bold mt-1"><span id="totalLogs">০</span> বার</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emergency Button -->
+    <button id="emergencyBtn"
+      class="w-full p-5 rounded-2xl bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white font-bold text-lg transition pulse-danger flex items-center justify-center gap-3 fade-in">
+      🆘 এখনই সাহায্য দরকার — জরুরি মোড
+    </button>
+
+    <!-- Two-column layout -->
+    <div class="grid lg:grid-cols-2 gap-6">
+
+      <!-- Log Form -->
+      <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 fade-in">
+        <h2 class="font-bold text-lg mb-4">📝 আজকের ট্রিগার লগ</h2>
+        <form id="logForm" class="space-y-4">
+          <div>
+            <label class="block text-sm mb-2">মুড</label>
+            <div class="grid grid-cols-5 gap-2">
+              <button type="button" data-mood="great" class="mood-btn p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xl">😄</button>
+              <button type="button" data-mood="good" class="mood-btn p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xl">🙂</button>
+              <button type="button" data-mood="ok" class="mood-btn p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xl">😐</button>
+              <button type="button" data-mood="low" class="mood-btn p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xl">😔</button>
+              <button type="button" data-mood="urge" class="mood-btn p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xl">😰</button>
+            </div>
+            <input type="hidden" id="mood" value="">
+          </div>
+          <div>
+            <label class="block text-sm mb-2">ট্রিগার (কী হয়েছিল?)</label>
+            <input type="text" id="trigger" placeholder="যেমন: একা ছিলাম, রাতে দেরি করে ঘুম..."
+              class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-indigo-500 focus:outline-none transition">
+          </div>
+          <div>
+            <label class="block text-sm mb-2">নোট (ঐচ্ছিক)</label>
+            <textarea id="note" rows="3" placeholder="আজকের অনুভূতি লিখে রাখুন..."
+              class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-indigo-500 focus:outline-none transition resize-none"></textarea>
+          </div>
+          <button type="submit" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-semibold transition">
+            লগ সংরক্ষণ করুন
+          </button>
+        </form>
+      </div>
+
+      <!-- History -->
+      <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 fade-in">
+        <h2 class="font-bold text-lg mb-4">📊 সাম্প্রতিক লগ</h2>
+        <div id="historyList" class="space-y-2 max-h-[480px] overflow-y-auto pr-1">
+          <p class="text-slate-500 text-sm text-center py-8">এখনো কোনো লগ নেই।</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Emergency Modal -->
+  <div id="emergencyModal" class="hidden fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-sm overflow-y-auto">
+    <div class="min-h-full flex items-center justify-center p-4">
+      <div class="max-w-lg w-full p-6 rounded-2xl bg-slate-900 border border-rose-500/30 fade-in">
+        <div class="flex justify-between items-start mb-4">
+          <h2 class="text-2xl font-bold text-rose-400">শান্ত হোন 🫂</h2>
+          <button id="closeEmergency" class="text-slate-400 hover:text-white text-2xl leading-none">×</button>
+        </div>
+
+        <!-- Quote -->
+        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 mb-4">
+          <p class="text-slate-300 italic" id="emergencyQuote">লোড হচ্ছে...</p>
+        </div>
+
+        <!-- Breathing -->
+        <div class="p-6 rounded-xl bg-gradient-to-br from-indigo-950 to-slate-950 border border-indigo-500/20 mb-4 text-center">
+          <p class="text-sm text-slate-400 mb-4">শ্বাস-প্রশ্বাসের ব্যায়াম · ৪-৭-৮ পদ্ধতি</p>
+          <div class="relative w-32 h-32 mx-auto mb-4 flex items-center justify-center">
+            <div id="breathCircle" class="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-500 to-emerald-500 opacity-40 breathing-circle"></div>
+            <span id="breathText" class="relative text-2xl font-bold text-white">শুরু করুন</span>
+          </div>
+          <button id="startBreath" class="px-6 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-sm font-semibold transition">
+            ব্যায়াম শুরু করুন
+          </button>
+        </div>
+
+        <!-- Distractions -->
+        <div class="space-y-2">
+          <p class="text-sm text-slate-400 mb-2">দ্রুত দিক পরিবর্তনের উপায়:</p>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 text-sm">🚶 ১০ মিনিট হাঁটুন</div>
+            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 text-sm">💧 ঠান্ডা পানি পান করুন</div>
+            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 text-sm">📞 বন্ধুকে কল করুন</div>
+            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 text-sm">🚿 ঠান্ডা পানিতে স্নান</div>
+            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 text-sm">🎵 প্রিয় গান শুনুন</div>
+            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 text-sm">📓 জার্নাল লিখুন</div>
+          </div>
+        </div>
+
+        <button id="newQuote" class="w-full mt-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm font-semibold transition">
+          🔄 নতুন মোটিভেশন দেখান
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/guard.js"></script>
+  <script type="module" src="js/dashboard.js"></script>
+</body>
+        </html>

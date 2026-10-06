@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Firebase Test</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #0f172a; color: #e2e8f0; }
+    .ok { color: #22c55e; }
+    .err { color: #ef4444; }
+    pre { background: #1e293b; padding: 10px; border-radius: 8px; overflow: auto; }
+  </style>
+</head>
+<body>
+  <h1>Firebase Connection Test</h1>
+  <div id="output">চেক করা হচ্ছে...</div>
+
+  <script type="module">
+    const out = document.getElementById('output');
+    try {
+      const mod = await import('./js/firebase-config.js');
+      if (mod.auth) {
+        out.innerHTML += '<p class="ok">✅ firebase-config.js লোড হয়েছে</p>';
+        out.innerHTML += '<p class="ok">✅ Auth initialized</p>';
+        out.innerHTML += '<p class="ok">✅ App: ' + mod.auth.app.name + '</p>';
+        out.innerHTML += '<p class="ok">✅ Project: ' + mod.auth.app.options.projectId + '</p>';
+        if (mod.auth.app.options.apiKey?.startsWith('AIza')) {
+          out.innerHTML += '<p class="ok">✅ API Key সঠিক দেখাচ্ছে</p>';
+        } else {
+          out.innerHTML += '<p class="err">❌ API Key সেট করা হয়নি!</p>';
+        }
+      } else {
+        out.innerHTML += '<p class="err">❌ auth export পাওয়া যায়নি</p>';
+      }
+    } catch (err) {
+      out.innerHTML += '<p class="err">❌ Error: ' + err.message + '</p>';
+      out.innerHTML += '<pre>' + err.stack + '</pre>';
+    }
+  </script>
+</body>
+    </html>
